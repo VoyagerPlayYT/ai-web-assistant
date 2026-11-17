@@ -3,22 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Google & Web Assistant — Умный помощник для учебы</title>
+    <title>AI Google & Web Assistant — VoyagerTeam Lab</title>
+    <!-- Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Markdown & Highlight.js -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark-dimmed.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
                     colors: {
-                        brand: {
-                            50: '#eef2ff',
-                            500: '#6366f1',
-                            600: '#4f46e5',
-                            700: '#4338ca',
+                        gemini: {
+                            bg: '#0A0B14',
+                            card: 'rgba(18, 20, 32, 0.72)',
+                            border: 'rgba(255, 255, 255, 0.08)',
+                            indigo: '#6366F1',
+                            violet: '#A855F7',
+                            glow: 'rgba(99, 102, 241, 0.15)'
                         }
                     }
                 }
@@ -26,138 +41,214 @@
         }
     </script>
     <style>
-        .prose pre { background-color: #161B26 !important; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 12px; }
-        .prose code { color: #38bdf8; }
-        .prose a { color: #818cf8; text-decoration: underline; }
+        :root {
+            --bg-glow: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99, 102, 241, 0.22), transparent 70%);
+        }
+        body {
+            background-color: #0A0B14;
+            background-image: var(--bg-glow);
+            background-attachment: fixed;
+        }
+        .bento-card {
+            background: rgba(18, 20, 32, 0.72);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .bento-card:hover {
+            border-color: rgba(99, 102, 241, 0.35);
+            box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.2);
+        }
+        .prose pre {
+            background-color: #0E111C !important;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 14px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .prose code { color: #A5B4FC; font-family: 'JetBrains Mono', monospace; }
+        .prose a { color: #818CF8; text-decoration: underline; text-underline-offset: 4px; }
         .prose ul { list-style-type: disc; margin-left: 1.25rem; }
         .prose ol { list-style-type: decimal; margin-left: 1.25rem; }
     </style>
 </head>
-<body class="bg-[#0B0F19] text-slate-100 min-h-screen flex flex-col font-sans">
-    <!-- Header -->
-    <header class="border-b border-slate-800 bg-[#0F172A]/80 backdrop-blur sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20">
-                    AI
+<body class="text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-indigo-500/30 selection:text-indigo-200">
+
+    <!-- Top Navigation Bar -->
+    <header class="border-b border-white/[0.06] bg-[#0A0B14]/70 backdrop-blur-xl sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3.5">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/25 ring-1 ring-white/20">
+                    <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-lg leading-tight bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
-                        AI Study & Web Assistant
-                    </h1>
-                    <p class="text-xs text-slate-400">Интеллектуальный помощник для поиска, анализа и конспектов</p>
+                    <div class="flex items-center space-x-2">
+                        <h1 class="font-bold text-base text-white tracking-tight">AI Study & Web Assistant</h1>
+                        <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-semibold">VoyagerTeam Lab</span>
+                    </div>
+                    <p class="text-xs text-slate-400">Интеллектуальный поиск, структурирование и конспекты</p>
                 </div>
             </div>
+
             <div class="flex items-center space-x-3">
-                <button onclick="toggleNotesDrawer()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 border border-slate-700 flex items-center space-x-2 transition">
-                    <span>📚 Мои конспекты</span>
-                    <span id="notesCountBadge" class="bg-indigo-600 text-white rounded-full px-1.5 py-0.2 text-[10px]">0</span>
+                <button onclick="toggleNotesDrawer()" class="px-3.5 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-xs text-slate-300 border border-white/[0.08] flex items-center space-x-2 transition font-medium">
+                    <i data-lucide="book-marked" class="w-4 h-4 text-indigo-400"></i>
+                    <span>Конспекты</span>
+                    <span id="notesCountBadge" class="bg-indigo-600 text-white rounded-full px-1.5 py-0.2 text-[10px] font-mono font-bold">0</span>
                 </button>
-                <div class="px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs flex items-center space-x-1.5">
+                <div class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono flex items-center space-x-2">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span>Сервер активен</span>
+                    <span>SERVER READY</span>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Main Container -->
-    <div class="flex-1 max-w-7xl w-full mx-auto p-4 flex gap-6 relative">
-        <!-- Chat Area -->
-        <div class="flex-1 flex flex-col bg-[#0F172A] border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-            <!-- Mode Selector Bar -->
-            <div class="p-3 border-b border-slate-800 bg-slate-900/50 flex flex-wrap gap-2 items-center justify-between">
+    <!-- Main Workspace Bento -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 flex gap-6 relative">
+        <!-- Main Chat Box -->
+        <div class="flex-1 flex flex-col bento-card overflow-hidden shadow-2xl">
+            <!-- Mode Switcher Pill Bar -->
+            <div class="p-3.5 border-b border-white/[0.06] bg-white/[0.02] flex flex-wrap gap-2 items-center justify-between">
                 <div class="flex flex-wrap gap-1.5" id="modeSelector">
-                    <button onclick="setMode('search')" class="mode-btn px-3 py-1.5 text-xs rounded-lg font-medium transition bg-indigo-600 text-white" data-mode="search">
-                        🔍 Поиск & Сводка
+                    <button onclick="setMode('search')" class="mode-btn px-3 py-1.5 text-xs rounded-xl font-medium transition flex items-center space-x-1.5 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30" data-mode="search">
+                        <i data-lucide="search" class="w-3.5 h-3.5"></i>
+                        <span>Поиск & Факты</span>
                     </button>
-                    <button onclick="setMode('summarize')" class="mode-btn px-3 py-1.5 text-xs rounded-lg font-medium transition bg-slate-800 text-slate-300 hover:bg-slate-700" data-mode="summarize">
-                        📝 Конспектирование
+                    <button onclick="setMode('summarize')" class="mode-btn px-3 py-1.5 text-xs rounded-xl font-medium transition flex items-center space-x-1.5 bg-white/[0.04] text-slate-400 hover:text-white hover:bg-white/[0.08]" data-mode="summarize">
+                        <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                        <span>Конспектирование</span>
                     </button>
-                    <button onclick="setMode('translate')" class="mode-btn px-3 py-1.5 text-xs rounded-lg font-medium transition bg-slate-800 text-slate-300 hover:bg-slate-700" data-mode="translate">
-                        🌐 Переводчик
+                    <button onclick="setMode('translate')" class="mode-btn px-3 py-1.5 text-xs rounded-xl font-medium transition flex items-center space-x-1.5 bg-white/[0.04] text-slate-400 hover:text-white hover:bg-white/[0.08]" data-mode="translate">
+                        <i data-lucide="languages" class="w-3.5 h-3.5"></i>
+                        <span>Переводчик</span>
                     </button>
-                    <button onclick="setMode('quiz')" class="mode-btn px-3 py-1.5 text-xs rounded-lg font-medium transition bg-slate-800 text-slate-300 hover:bg-slate-700" data-mode="quiz">
-                        🎓 Генератор тестов
+                    <button onclick="setMode('quiz')" class="mode-btn px-3 py-1.5 text-xs rounded-xl font-medium transition flex items-center space-x-1.5 bg-white/[0.04] text-slate-400 hover:text-white hover:bg-white/[0.08]" data-mode="quiz">
+                        <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
+                        <span>Генератор тестов</span>
                     </button>
-                    <button onclick="setMode('qa')" class="mode-btn px-3 py-1.5 text-xs rounded-lg font-medium transition bg-slate-800 text-slate-300 hover:bg-slate-700" data-mode="qa">
-                        💡 Вопрос-Ответ
+                    <button onclick="setMode('qa')" class="mode-btn px-3 py-1.5 text-xs rounded-xl font-medium transition flex items-center space-x-1.5 bg-white/[0.04] text-slate-400 hover:text-white hover:bg-white/[0.08]" data-mode="qa">
+                        <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
+                        <span>Вопрос-Ответ</span>
                     </button>
                 </div>
-                <div class="text-[11px] text-slate-400 hidden sm:block" id="modeDescription">
-                    Режим поиска фактов и энциклопедических статей
+                <div class="text-[11px] font-mono text-slate-400 hidden sm:flex items-center space-x-1.5" id="modeDescription">
+                    <i data-lucide="info" class="w-3.5 h-3.5 text-indigo-400"></i>
+                    <span>Поиск фактов и энциклопедических статей</span>
                 </div>
             </div>
 
             <!-- Messages Stream -->
-            <div id="messagesContainer" class="flex-1 p-4 overflow-y-auto space-y-4 max-h-[calc(100vh-280px)]">
-                <!-- Welcome card -->
-                <div class="p-5 rounded-xl bg-gradient-to-r from-indigo-950/40 to-purple-950/30 border border-indigo-900/40">
-                    <h3 class="font-bold text-white text-base mb-1">Привет! Чем я могу помочь в учебе сегодня? 🚀</h3>
-                    <p class="text-sm text-slate-300 mb-3">
-                        Задайте вопрос по физике, математике или программированию, попросите сделать краткий конспект длинной статьи или проверьте свои знания через тест.
+            <div id="messagesContainer" class="flex-1 p-5 overflow-y-auto space-y-5 max-h-[calc(100vh-290px)]">
+                <!-- Welcome Bento Banner -->
+                <div class="p-6 rounded-2xl bg-gradient-to-r from-indigo-950/40 via-purple-950/30 to-transparent border border-indigo-500/20 shadow-inner">
+                    <div class="flex items-center space-x-2 text-indigo-400 text-xs font-mono font-bold uppercase tracking-wider mb-2">
+                        <i data-lucide="cpu" class="w-4 h-4"></i>
+                        <span>Локальная нейросетевая среда</span>
+                    </div>
+                    <h3 class="font-extrabold text-white text-lg tracking-tight mb-1.5">Привет! Чем помочь в учебе сегодня? 🚀</h3>
+                    <p class="text-sm text-slate-300 mb-4 max-w-2xl leading-relaxed">
+                        Задай сложный научный вопрос, отправь сырой текст для быстрого конспекта или сгенерируй тестовые задания для проверки перед контрольной.
                     </p>
                     <div class="flex flex-wrap gap-2 text-xs">
-                        <button onclick="quickPrompt('Что такое микросервисная архитектура?')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition">
-                            ⚡ Что такое микросервисная архитектура?
+                        <button onclick="quickPrompt('Что такое микросервисная архитектура и чем она лучше монолита?')" class="px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 border border-white/[0.08] transition flex items-center space-x-1.5">
+                            <i data-lucide="terminal" class="w-3.5 h-3.5 text-indigo-400"></i>
+                            <span>Что такое микросервисная архитектура?</span>
                         </button>
-                        <button onclick="quickPrompt('Законспектируй: Реляционные базы данных используют SQL, поддерживают ACID свойства транзакций и хранят структурированные таблицы с внешними ключами.')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition">
-                            📝 Законспектируй свойства реляционных БД
+                        <button onclick="quickPrompt('Законспектируй тезисно: Реляционные базы данных используют SQL, гарантируют ACID свойства транзакций и хранят нормализованные таблицы.')" class="px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 border border-white/[0.08] transition flex items-center space-x-1.5">
+                            <i data-lucide="list-tree" class="w-3.5 h-3.5 text-purple-400"></i>
+                            <span>Законспектируй свойства реляционных БД</span>
                         </button>
-                        <button onclick="quickPrompt('Создай мини-тест по протоколу HTTP и WebSocket')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition">
-                            🎯 Тест по протоколам HTTP/WebSocket
+                        <button onclick="quickPrompt('Создай мини-тест по протоколам HTTP, WebSocket и сетевым сокетам')" class="px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 border border-white/[0.08] transition flex items-center space-x-1.5">
+                            <i data-lucide="award" class="w-3.5 h-3.5 text-emerald-400"></i>
+                            <span>Тест по HTTP & WebSocket</span>
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Input Form -->
-            <div class="p-3 border-t border-slate-800 bg-slate-900/90">
-                <form id="chatForm" onsubmit="handleSend(event)" class="flex gap-2">
-                    <textarea id="messageInput" rows="2" placeholder="Введите ваш вопрос, текст для конспекта или тему..."
-                        class="flex-1 bg-slate-800/80 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-none"></textarea>
-                    <button type="submit" id="sendBtn" class="px-5 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-medium text-sm text-white shadow-lg shadow-indigo-600/30 flex items-center justify-center transition disabled:opacity-50">
+            <!-- Input Area -->
+            <div class="p-4 border-t border-white/[0.06] bg-black/30 backdrop-blur-md">
+                <form id="chatForm" onsubmit="handleSend(event)" class="flex gap-3">
+                    <textarea id="messageInput" rows="2" placeholder="Введите ваш вопрос или вставьте текст для конспекта..."
+                        class="flex-1 bg-white/[0.04] border border-white/[0.1] rounded-2xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-none transition"></textarea>
+                    <button type="submit" id="sendBtn" class="px-6 rounded-2xl bg-indigo-600 hover:bg-indigo-500 font-bold text-sm text-white shadow-xl shadow-indigo-600/30 flex items-center justify-center space-x-2 transition transform active:scale-95 disabled:opacity-50">
                         <span>Отправить</span>
+                        <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
                     </button>
                 </form>
             </div>
         </div>
 
-        <!-- Notes Drawer (Slide-out or side panel) -->
-        <div id="notesDrawer" class="w-80 bg-[#0F172A] border border-slate-800 rounded-2xl flex flex-col overflow-hidden shadow-xl hidden lg:flex">
-            <div class="p-3 border-b border-slate-800 bg-slate-900/50 flex justify-between items-center">
+        <!-- Notes Bento Side Panel -->
+        <div id="notesDrawer" class="w-80 bento-card flex flex-col overflow-hidden shadow-2xl hidden lg:flex">
+            <div class="p-4 border-b border-white/[0.06] bg-white/[0.02] flex justify-between items-center">
                 <h3 class="font-bold text-sm text-white flex items-center space-x-2">
-                    <span>📚 Сохранённые конспекты</span>
+                    <i data-lucide="bookmark" class="w-4 h-4 text-indigo-400"></i>
+                    <span>Сохранённые конспекты</span>
                 </h3>
-                <button onclick="fetchNotes()" class="text-xs text-indigo-400 hover:text-indigo-300">Обновить</button>
+                <button onclick="fetchNotes()" class="text-xs text-indigo-400 hover:text-indigo-300 font-mono">Обновить</button>
             </div>
-            <div id="notesList" class="flex-1 p-3 overflow-y-auto space-y-2 text-xs">
-                <div class="text-slate-500 text-center py-8">Конспектов пока нет. Сохраняйте ответы ассистента в один клик!</div>
+            <div id="notesList" class="flex-1 p-3.5 overflow-y-auto space-y-2.5 text-xs">
+                <div class="text-slate-500 text-center py-10 font-mono">Конспектов пока нет.</div>
             </div>
         </div>
-    </div>
+    </main>
+
+    <!-- Toast Notifications Container -->
+    <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col space-y-2"></div>
 
     <script>
         let currentMode = 'search';
 
         const modeDescriptions = {
-            search: 'Поиск фактов и энциклопедических статей по базе знаний и веб-источникам',
-            summarize: 'Структурирование больших текстов в удобные ключевые тезисы и выводы',
-            translate: 'Академический и технический перевод с лингвистическим анализом',
-            quiz: 'Генерация тестовых заданий с вариантами ответов для закрепления знаний',
-            qa: 'Развернутый инженерный разбор вопросов с объяснением логики'
+            search: 'Поиск фактов и энциклопедических статей',
+            summarize: 'Структурирование больших текстов в ключевые тезисы',
+            translate: 'Академический перевод с лингвистическим анализом',
+            quiz: 'Генерация интерактивных тестов для проверки знаний',
+            qa: 'Развернутый инженерный разбор вопросов'
         };
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            const isSuccess = type === 'success';
+            toast.className = `p-3.5 rounded-2xl border text-xs font-medium flex items-center space-x-2.5 shadow-2xl transition transform duration-300 translate-y-2 opacity-0 ${
+                isSuccess ? 'bg-[#0E1B15] text-emerald-300 border-emerald-500/30 shadow-emerald-950/50' : 'bg-[#141522] text-indigo-200 border-indigo-500/30 shadow-indigo-950/50'
+            }`;
+            toast.innerHTML = `
+                <i data-lucide="${isSuccess ? 'check-circle-2' : 'info'}" class="w-4 h-4 ${isSuccess ? 'text-emerald-400' : 'text-indigo-400'}"></i>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+            lucide.createIcons();
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-2', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
 
         function setMode(mode) {
             currentMode = mode;
             document.querySelectorAll('.mode-btn').forEach(b => {
                 if (b.dataset.mode === mode) {
-                    b.className = 'mode-btn px-3 py-1.5 text-xs rounded-lg font-medium transition bg-indigo-600 text-white';
+                    b.className = 'mode-btn px-3 py-1.5 text-xs rounded-xl font-medium transition flex items-center space-x-1.5 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30';
                 } else {
-                    b.className = 'mode-btn px-3 py-1.5 text-xs rounded-lg font-medium transition bg-slate-800 text-slate-300 hover:bg-slate-700';
+                    b.className = 'mode-btn px-3 py-1.5 text-xs rounded-xl font-medium transition flex items-center space-x-1.5 bg-white/[0.04] text-slate-400 hover:text-white hover:bg-white/[0.08]';
                 }
             });
-            document.getElementById('modeDescription').innerText = modeDescriptions[mode] || '';
+            document.getElementById('modeDescription').innerHTML = `
+                <i data-lucide="info" class="w-3.5 h-3.5 text-indigo-400"></i>
+                <span>${modeDescriptions[mode] || ''}</span>
+            `;
+            lucide.createIcons();
         }
 
         function quickPrompt(text) {
@@ -171,11 +262,9 @@
             const msg = input.value.trim();
             if (!msg) return;
 
-            // Render User Message
             appendMessage('user', msg);
             input.value = '';
 
-            // Render Loading Placeholder
             const loadingId = 'loading-' + Date.now();
             appendLoading(loadingId);
 
@@ -193,7 +282,7 @@
                 appendMessage('ai', data.reply, msg);
             } catch (err) {
                 removeElement(loadingId);
-                appendMessage('ai', '⚠️ Произошла ошибка при обработке запроса. Проверьте соединение с сервером.');
+                appendMessage('ai', '⚠️ Ошибка связи с сервером ассистента.');
             } finally {
                 sendBtn.disabled = false;
             }
@@ -202,12 +291,12 @@
         function appendMessage(role, content, originalQuery = '') {
             const container = document.getElementById('messagesContainer');
             const msgDiv = document.createElement('div');
-            msgDiv.className = 'flex flex-col space-y-1';
+            msgDiv.className = 'flex flex-col space-y-1.5';
 
             if (role === 'user') {
                 msgDiv.innerHTML = `
                     <div class="flex items-start justify-end space-x-2">
-                        <div class="bg-indigo-600/90 text-white px-4 py-2.5 rounded-2xl rounded-tr-none text-sm max-w-xl shadow">
+                        <div class="bg-gradient-to-r from-indigo-600 to-indigo-500 text-white px-5 py-3 rounded-2xl rounded-tr-none text-sm max-w-xl shadow-lg shadow-indigo-600/20 font-medium">
                             ${escapeHtml(content)}
                         </div>
                     </div>
@@ -217,20 +306,22 @@
                 const queryAttr = encodeURIComponent(originalQuery || 'Конспект');
                 const contentAttr = encodeURIComponent(content);
                 msgDiv.innerHTML = `
-                    <div class="flex items-start space-x-3">
-                        <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-xs shrink-0 mt-1">
+                    <div class="flex items-start space-x-3.5">
+                        <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center font-bold text-xs shrink-0 mt-1 shadow-md shadow-indigo-600/30">
                             AI
                         </div>
-                        <div class="flex-1 bg-slate-900 border border-slate-800 px-4 py-3 rounded-2xl rounded-tl-none shadow-sm text-sm">
+                        <div class="flex-1 bg-white/[0.03] border border-white/[0.08] px-5 py-4 rounded-2xl rounded-tl-none shadow-sm text-sm">
                             <div class="prose prose-invert max-w-none text-slate-200">
                                 ${parsedHtml}
                             </div>
-                            <div class="mt-3 pt-2 border-t border-slate-800/80 flex items-center space-x-3 text-xs text-slate-400">
-                                <button onclick="saveToNotes('${queryAttr}', '${contentAttr}')" class="hover:text-indigo-400 flex items-center space-x-1 transition">
-                                    <span>💾 Сохранить в конспекты</span>
+                            <div class="mt-4 pt-3 border-t border-white/[0.06] flex items-center space-x-4 text-xs text-slate-400">
+                                <button onclick="saveToNotes('${queryAttr}', '${contentAttr}')" class="hover:text-indigo-400 flex items-center space-x-1.5 transition">
+                                    <i data-lucide="bookmark-plus" class="w-3.5 h-3.5"></i>
+                                    <span>В конспекты</span>
                                 </button>
-                                <button onclick="navigator.clipboard.writeText(\`${content.replace(/`/g, '\\`')}\`)" class="hover:text-slate-200 transition">
-                                    📋 Скопировать
+                                <button onclick="copyToClipboard(\`${content.replace(/`/g, '\\`')}\`)" class="hover:text-white flex items-center space-x-1.5 transition">
+                                    <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                                    <span>Скопировать</span>
                                 </button>
                             </div>
                         </div>
@@ -241,16 +332,17 @@
             container.appendChild(msgDiv);
             container.scrollTop = container.scrollHeight;
             hljs.highlightAll();
+            lucide.createIcons();
         }
 
         function appendLoading(id) {
             const container = document.getElementById('messagesContainer');
             const div = document.createElement('div');
             div.id = id;
-            div.className = 'flex items-center space-x-2 text-slate-400 text-xs py-2';
+            div.className = 'flex items-center space-x-2.5 text-slate-400 text-xs py-2 font-mono';
             div.innerHTML = `
-                <div class="w-2 h-2 rounded-full bg-indigo-500 animate-ping"></div>
-                <span>Анализ данных и поиск источников...</span>
+                <div class="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-ping"></div>
+                <span>Генерация ответа и анализ источников...</span>
             `;
             container.appendChild(div);
             container.scrollTop = container.scrollHeight;
@@ -259,6 +351,11 @@
         function removeElement(id) {
             const el = document.getElementById(id);
             if (el) el.remove();
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text);
+            showToast('Текст скопирован в буфер обмена!', 'success');
         }
 
         async function saveToNotes(encodedTitle, encodedContent) {
@@ -271,9 +368,9 @@
                     body: JSON.stringify({ title: title || 'Конспект', content: content, category: currentMode })
                 });
                 fetchNotes();
-                alert('✅ Конспект успешно сохранён!');
+                showToast('Конспект успешно сохранён в базу знаний!', 'success');
             } catch (e) {
-                alert('Ошибка при сохранении конспекта');
+                showToast('Ошибка при сохранении конспекта', 'error');
             }
         }
 
@@ -284,26 +381,27 @@
                 const list = document.getElementById('notesList');
                 document.getElementById('notesCountBadge').innerText = data.notes.length;
                 if (!data.notes || data.notes.length === 0) {
-                    list.innerHTML = '<div class="text-slate-500 text-center py-8">Конспектов пока нет.</div>';
+                    list.innerHTML = '<div class="text-slate-500 text-center py-10 font-mono">Конспектов пока нет.</div>';
                     return;
                 }
                 list.innerHTML = data.notes.map(n => `
-                    <div class="p-2.5 rounded-lg bg-slate-800/80 border border-slate-700/80 flex flex-col space-y-1">
-                        <div class="flex justify-between items-center font-medium text-slate-200">
+                    <div class="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:border-indigo-500/30 flex flex-col space-y-1.5 transition">
+                        <div class="flex justify-between items-center font-semibold text-slate-200">
                             <span class="truncate">${escapeHtml(n.title)}</span>
-                            <button onclick="deleteNote(${n.id})" class="text-rose-400 hover:text-rose-300 ml-1">✕</button>
+                            <button onclick="deleteNote(${n.id})" class="text-slate-500 hover:text-rose-400 ml-1">✕</button>
                         </div>
-                        <p class="text-[11px] text-slate-400 line-clamp-2">${escapeHtml(n.content.substring(0, 100))}...</p>
-                        <span class="text-[9px] text-slate-500">${n.created_at}</span>
+                        <p class="text-[11px] text-slate-400 line-clamp-2 leading-relaxed">${escapeHtml(n.content.substring(0, 90))}...</p>
+                        <span class="text-[9px] font-mono text-slate-500">${n.created_at}</span>
                     </div>
                 `).join('');
+                lucide.createIcons();
             } catch (e) {}
         }
 
         async function deleteNote(id) {
-            if (!confirm('Удалить конспект?')) return;
             await fetch(`/api/notes/${id}`, { method: 'DELETE' });
             fetchNotes();
+            showToast('Конспект удалён', 'info');
         }
 
         function toggleNotesDrawer() {
@@ -317,7 +415,7 @@
             return div.innerHTML;
         }
 
-        // Авто-загрузка конспектов при открытии
+        lucide.createIcons();
         fetchNotes();
     </script>
 </body>
