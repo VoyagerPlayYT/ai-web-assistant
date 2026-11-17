@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Google & Web Assistant — Умный помощник для учебы</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .prose pre { background-color: #161B26 !important; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 12px; }
+        .prose code { color: #38bdf8; }
+        .prose a { color: #818cf8; text-decoration: underline; }
+        .prose ul { list-style-type: disc; margin-left: 1.25rem; }
+        .prose ol { list-style-type: decimal; margin-left: 1.25rem; }
+    </style>
+</head>
+<body class="bg-[#0B0F19] text-slate-100 min-h-screen flex flex-col font-sans">
+    <!-- Header -->
+    <header class="border-b border-slate-800 bg-[#0F172A]/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20">
+                    AI
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
+                        AI Study & Web Assistant
+                    </h1>
+                    <p class="text-xs text-slate-400">Интеллектуальный помощник для поиска, анализа и конспектов</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button onclick="toggleNotesDrawer()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 border border-slate-700 flex items-center space-x-2 transition">
+                    <span>📚 Мои конспекты</span>
+                    <span id="notesCountBadge" class="bg-indigo-600 text-white rounded-full px-1.5 py-0.2 text-[10px]">0</span>
+                </button>
+                <div class="px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs flex items-center space-x-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>Сервер активен</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="flex-1 max-w-7xl w-full mx-auto p-4 flex gap-6 relative">
+        <!-- Chat Area -->
+        <div class="flex-1 flex flex-col bg-[#0F172A] border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+            <!-- Mode Selector Bar -->
+            <div class="p-3 border-b border-slate-800 bg-slate-900/50 flex flex-wrap gap-2 items-center justify-between">
+                <div class="flex flex-wrap gap-1.5" id="modeSelector">
+                    <button onclick="setMode('search')" class="mode-btn px-3 py-1.5 text-xs rounded-lg font-medium transition bg-indigo-600 text-white" data-mode="search">
+                        🔍 Поиск & Сводка
+                    </button>
+                    <button onclick="setMode('summarize')" class="mode-btn px-3 py-1.5 text-xs rounded-lg font-medium transition bg-slate-800 text-slate-300 hover:bg-slate-700" data-mode="summarize">
+                        📝 Конспектирование
+                    </button>
+                    <button onclick="setMode('translate')" class="mode-btn px-3 py-1.5 text-xs rounded-lg font-medium transition bg-slate-800 text-slate-300 hover:bg-slate-700" data-mode="translate">
+                        🌐 Переводчик
+                    </button>
+                    <button onclick="setMode('quiz')" class="mode-btn px-3 py-1.5 text-xs rounded-lg font-medium transition bg-slate-800 text-slate-300 hover:bg-slate-700" data-mode="quiz">
+                        🎓 Генератор тестов
+                    </button>
+                    <button onclick="setMode('qa')" class="mode-btn px-3 py-1.5 text-xs rounded-lg font-medium transition bg-slate-800 text-slate-300 hover:bg-slate-700" data-mode="qa">
+                        💡 Вопрос-Ответ
+                    </button>
+                </div>
+                <div class="text-[11px] text-slate-400 hidden sm:block" id="modeDescription">
+                    Режим поиска фактов и энциклопедических статей
+                </div>
+            </div>
+
+            <!-- Messages Stream -->
+            <div id="messagesContainer" class="flex-1 p-4 overflow-y-auto space-y-4 max-h-[calc(100vh-280px)]">
+                <!-- Welcome card -->
+                <div class="p-5 rounded-xl bg-gradient-to-r from-indigo-950/40 to-purple-950/30 border border-indigo-900/40">
+                    <h3 class="font-bold text-white text-base mb-1">Привет! Чем я могу помочь в учебе сегодня? 🚀</h3>
+                    <p class="text-sm text-slate-300 mb-3">
+                        Задайте вопрос по физике, математике или программированию, попросите сделать краткий конспект длинной статьи или проверьте свои знания через тест.
+                    </p>
+                    <div class="flex flex-wrap gap-2 text-xs">
+                        <button onclick="quickPrompt('Что такое микросервисная архитектура?')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition">
+                            ⚡ Что такое микросервисная архитектура?
+                        </button>
+                        <button onclick="quickPrompt('Законспектируй: Реляционные базы данных используют SQL, поддерживают ACID свойства транзакций и хранят структурированные таблицы с внешними ключами.')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition">
+                            📝 Законспектируй свойства реляционных БД
+                        </button>
+                        <button onclick="quickPrompt('Создай мини-тест по протоколу HTTP и WebSocket')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition">
+                            🎯 Тест по протоколам HTTP/WebSocket
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Form -->
+            <div class="p-3 border-t border-slate-800 bg-slate-900/90">
+                <form id="chatForm" onsubmit="handleSend(event)" class="flex gap-2">
+                    <textarea id="messageInput" rows="2" placeholder="Введите ваш вопрос, текст для конспекта или тему..."
+                        class="flex-1 bg-slate-800/80 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-none"></textarea>
+                    <button type="submit" id="sendBtn" class="px-5 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-medium text-sm text-white shadow-lg shadow-indigo-600/30 flex items-center justify-center transition disabled:opacity-50">
+                        <span>Отправить</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Notes Drawer (Slide-out or side panel) -->
+        <div id="notesDrawer" class="w-80 bg-[#0F172A] border border-slate-800 rounded-2xl flex flex-col overflow-hidden shadow-xl hidden lg:flex">
+            <div class="p-3 border-b border-slate-800 bg-slate-900/50 flex justify-between items-center">
+                <h3 class="font-bold text-sm text-white flex items-center space-x-2">
+                    <span>📚 Сохранённые конспекты</span>
+                </h3>
+                <button onclick="fetchNotes()" class="text-xs text-indigo-400 hover:text-indigo-300">Обновить</button>
+            </div>
+            <div id="notesList" class="flex-1 p-3 overflow-y-auto space-y-2 text-xs">
+                <div class="text-slate-500 text-center py-8">Конспектов пока нет. Сохраняйте ответы ассистента в один клик!</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentMode = 'search';
+
+        const modeDescriptions = {
+            search: 'Поиск фактов и энциклопедических статей по базе знаний и веб-источникам',
+            summarize: 'Структурирование больших текстов в удобные ключевые тезисы и выводы',
+            translate: 'Академический и технический перевод с лингвистическим анализом',
+            quiz: 'Генерация тестовых заданий с вариантами ответов для закрепления знаний',
+            qa: 'Развернутый инженерный разбор вопросов с объяснением логики'
+        };
+
+        function setMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.mode-btn').forEach(b => {
+                if (b.dataset.mode === mode) {
+                    b.className = 'mode-btn px-3 py-1.5 text-xs rounded-lg font-medium transition bg-indigo-600 text-white';
+                } else {
+                    b.className = 'mode-btn px-3 py-1.5 text-xs rounded-lg font-medium transition bg-slate-800 text-slate-300 hover:bg-slate-700';
+                }
+            });
+            document.getElementById('modeDescription').innerText = modeDescriptions[mode] || '';
+        }
+
+        function quickPrompt(text) {
+            document.getElementById('messageInput').value = text;
+            handleSend(new Event('submit'));
+        }
+
+        async function handleSend(e) {
+            if (e) e.preventDefault();
+            const input = document.getElementById('messageInput');
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            // Render User Message
+            appendMessage('user', msg);
+            input.value = '';
+
+            // Render Loading Placeholder
+            const loadingId = 'loading-' + Date.now();
+            appendLoading(loadingId);
+
+            const sendBtn = document.getElementById('sendBtn');
+            sendBtn.disabled = true;
+
+            try {
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ message: msg, mode: currentMode })
+                });
+                const data = await res.json();
+                removeElement(loadingId);
+                appendMessage('ai', data.reply, msg);
+            } catch (err) {
+                removeElement(loadingId);
+                appendMessage('ai', '⚠️ Произошла ошибка при обработке запроса. Проверьте соединение с сервером.');
+            } finally {
+                sendBtn.disabled = false;
+            }
+        }
+
+        function appendMessage(role, content, originalQuery = '') {
+            const container = document.getElementById('messagesContainer');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'flex flex-col space-y-1';
+
+            if (role === 'user') {
+                msgDiv.innerHTML = `
+                    <div class="flex items-start justify-end space-x-2">
+                        <div class="bg-indigo-600/90 text-white px-4 py-2.5 rounded-2xl rounded-tr-none text-sm max-w-xl shadow">
+                            ${escapeHtml(content)}
+                        </div>
+                    </div>
+                `;
+            } else {
+                const parsedHtml = marked.parse(content);
+                const queryAttr = encodeURIComponent(originalQuery || 'Конспект');
+                const contentAttr = encodeURIComponent(content);
+                msgDiv.innerHTML = `
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-xs shrink-0 mt-1">
+                            AI
+                        </div>
+                        <div class="flex-1 bg-slate-900 border border-slate-800 px-4 py-3 rounded-2xl rounded-tl-none shadow-sm text-sm">
+                            <div class="prose prose-invert max-w-none text-slate-200">
+                                ${parsedHtml}
+                            </div>
+                            <div class="mt-3 pt-2 border-t border-slate-800/80 flex items-center space-x-3 text-xs text-slate-400">
+                                <button onclick="saveToNotes('${queryAttr}', '${contentAttr}')" class="hover:text-indigo-400 flex items-center space-x-1 transition">
+                                    <span>💾 Сохранить в конспекты</span>
+                                </button>
+                                <button onclick="navigator.clipboard.writeText(\`${content.replace(/`/g, '\\`')}\`)" class="hover:text-slate-200 transition">
+                                    📋 Скопировать
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.appendChild(msgDiv);
+            container.scrollTop = container.scrollHeight;
+            hljs.highlightAll();
+        }
+
+        function appendLoading(id) {
+            const container = document.getElementById('messagesContainer');
+            const div = document.createElement('div');
+            div.id = id;
+            div.className = 'flex items-center space-x-2 text-slate-400 text-xs py-2';
+            div.innerHTML = `
+                <div class="w-2 h-2 rounded-full bg-indigo-500 animate-ping"></div>
+                <span>Анализ данных и поиск источников...</span>
+            `;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function removeElement(id) {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+        }
+
+        async function saveToNotes(encodedTitle, encodedContent) {
+            const title = decodeURIComponent(encodedTitle).substring(0, 50);
+            const content = decodeURIComponent(encodedContent);
+            try {
+                await fetch('/api/notes', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ title: title || 'Конспект', content: content, category: currentMode })
+                });
+                fetchNotes();
+                alert('✅ Конспект успешно сохранён!');
+            } catch (e) {
+                alert('Ошибка при сохранении конспекта');
+            }
+        }
+
+        async function fetchNotes() {
+            try {
+                const res = await fetch('/api/notes');
+                const data = await res.json();
+                const list = document.getElementById('notesList');
+                document.getElementById('notesCountBadge').innerText = data.notes.length;
+                if (!data.notes || data.notes.length === 0) {
+                    list.innerHTML = '<div class="text-slate-500 text-center py-8">Конспектов пока нет.</div>';
+                    return;
+                }
+                list.innerHTML = data.notes.map(n => `
+                    <div class="p-2.5 rounded-lg bg-slate-800/80 border border-slate-700/80 flex flex-col space-y-1">
+                        <div class="flex justify-between items-center font-medium text-slate-200">
+                            <span class="truncate">${escapeHtml(n.title)}</span>
+                            <button onclick="deleteNote(${n.id})" class="text-rose-400 hover:text-rose-300 ml-1">✕</button>
+                        </div>
+                        <p class="text-[11px] text-slate-400 line-clamp-2">${escapeHtml(n.content.substring(0, 100))}...</p>
+                        <span class="text-[9px] text-slate-500">${n.created_at}</span>
+                    </div>
+                `).join('');
+            } catch (e) {}
+        }
+
+        async function deleteNote(id) {
+            if (!confirm('Удалить конспект?')) return;
+            await fetch(`/api/notes/${id}`, { method: 'DELETE' });
+            fetchNotes();
+        }
+
+        function toggleNotesDrawer() {
+            const drawer = document.getElementById('notesDrawer');
+            drawer.classList.toggle('hidden');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Авто-загрузка конспектов при открытии
+        fetchNotes();
+    </script>
+</body>
+</html>
