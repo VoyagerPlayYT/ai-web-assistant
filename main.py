@@ -221,7 +221,7 @@ def perform_smart_translation(text: str, target: str) -> str:
 
 @app.get("/", response_class=HTMLResponse)
 async def index_page(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="index.html", context={"request": request})
 
 
 @app.post("/api/chat")
